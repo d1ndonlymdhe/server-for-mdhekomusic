@@ -1,9 +1,11 @@
 import express from "express";
 //@ts-ignore
 import Innertube from "youtubei.js";
+import { Client } from "youtubei";
 import ytdl from "ytdl-core";
 // import { Stream } from "stream";
 // import fs from "fs";
+const youtube = new Client;
 const app = express();
 const port = process.env.PORT || 4000;
 app.use(function (req, res, next) {
