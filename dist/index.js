@@ -4,9 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+//@ts-ignore
 const youtubei_js_1 = __importDefault(require("youtubei.js"));
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
+// import { Stream } from "stream";
+// import fs from "fs";
 const app = (0, express_1.default)();
+const port = process.env.PORT || 4000;
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -43,8 +47,8 @@ app.get("/search", (req, res) => {
         });
     }
 });
-app.listen(4000, () => {
-    console.log("listening on 4000");
+app.listen(port, () => {
+    console.log("listening on ", port);
 });
 async function search(query) {
     const youtube = await new youtubei_js_1.default();
