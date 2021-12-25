@@ -1,0 +1,13 @@
+{
+    "files": [
+        "src/index.ts"
+    ],
+    "compilerOptions": {
+        "allowJs": true,
+        "typeRoots": ["./node_modules/@types","./declarations"],
+        "watch": true,
+        "outDir": "dist/",
+        "resolveJsonModule": true,
+    },
+    "extends": "@tsconfig/node16/tsconfig.json",
+}
