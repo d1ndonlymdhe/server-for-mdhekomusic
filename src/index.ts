@@ -5,7 +5,7 @@ import ytdl from "ytdl-core";
 import { Stream } from "stream";
 import fs from "fs";
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT;
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
