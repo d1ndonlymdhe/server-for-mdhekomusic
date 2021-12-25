@@ -1,10 +1,11 @@
 import express from "express";
+//@ts-ignore
 import Innertube from "youtubei.js";
 import ytdl from "ytdl-core";
 import { Stream } from "stream";
 import fs from "fs";
 const app = express();
-
+const PORT = process.env.PORT || 4000;
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -49,8 +50,8 @@ app.get("/search", (req, res) => {
   }
 });
 
-app.listen(4000, () => {
-  console.log("listening on 4000");
+app.listen(PORT, () => {
+  console.log("listening on ",PORT);
 });
 
 async function search(query: string) {
