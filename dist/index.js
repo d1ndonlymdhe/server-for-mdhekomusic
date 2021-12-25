@@ -44,6 +44,10 @@ app.get("/search", (req, res) => {
                 resultArr.push({ title, videoUrl, channel, thumbnail });
             }
             res.send(resultArr);
+        }).catch((err) => {
+            if (err) {
+                console.log(err);
+            }
         });
     }
 });

@@ -46,6 +46,10 @@ app.get("/search", (req, res) => {
         resultArr.push({ title, videoUrl, channel, thumbnail });
       }
       res.send(resultArr);
+    }).catch((err:any)=>{
+        if(err){
+          console.log(err)
+        }
     });
   }
 });
@@ -56,7 +60,7 @@ app.listen(port, () => {
 
 async function search(query: string) {
   const youtube = await new Innertube();
-  const result: any = await youtube.search(query);
+  const result = await youtube.search(query);
   //   const resultArr: object[] = [];
   //   for (let i = 0; i < 10; i++) {
   //     const video = result.videos[i];
