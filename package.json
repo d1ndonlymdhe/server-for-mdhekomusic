@@ -12,6 +12,7 @@
   "dependencies": {
     "@tsconfig/node16": "^1.0.2",
     "express": "^4.17.2",
+    "youtubei": "^0.0.1-rc.27",
     "youtubei.js": "^1.2.8-npm",
     "ytdl-core": "^4.9.2"
   },

@@ -1,11 +1,11 @@
 import express from "express";
 //@ts-ignore
 import Innertube from "youtubei.js";
-import { Client } from "youtubei";
+import { ChannelCompact, Client, Thumbnails, VideoCompact } from "youtubei";
 import ytdl from "ytdl-core";
 // import { Stream } from "stream";
 // import fs from "fs";
-const youtube = new Client;
+const youtube = new Client();
 const app = express();
 const port = process.env.PORT || 4000;
 app.use(function (req, res, next) {
@@ -31,38 +31,44 @@ app.get("/", (req, res) => {
   res.send("server is working");
 });
 
-app.get("/search", (req, res) => {
-  const searchTerm = req.query.searchTerm;
-  if (typeof searchTerm == "string") {
-    const result: any = search(searchTerm);
-    result.then((data: any) => {
-      console.log(data);
-      const resultArr: object[] = [];
-      for (let i = 0; i < 10; i++) {
-        const video = data.videos[i];
-        const title = video.title;
-        const videoUrl = video.url;
-        const channel = video.author;
-        const thumbnail = video.metadata.thumbnails[0];
+type forResArr = {
+  title: string;
+  thumbnail: Thumbnails;
+  videoUrl: string;
+  channel: ChannelCompact;
+};
 
-        resultArr.push({ title, videoUrl, channel, thumbnail });
+app.get("/search", (req, res) => {
+  const searchTerm: string = <string>req.query.searchTerm;
+  const resArr: forResArr[] = [];
+  search(searchTerm)
+    .then((results) => {
+      const length: number = results.length < 10 ? results.length : 10;
+      for (let i = 0; i < length; i++) {
+        const title = <string>results[i].title;
+        const thumbnail = <Thumbnails>results[i].thumbnails;
+        const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
+        //@ts-ignore
+        const channel: ChannelCompact = results[i].channel;
+        resArr.push({ title, thumbnail, videoUrl, channel });
       }
-      res.send(resultArr);
-    }).catch((err:any)=>{
-        if(err){
-          console.log(err)
-        }
+      res.send(resArr);
+    })
+    .catch((err) => {
+      if (err) {
+        console.log(err);
+      }
     });
-  }
 });
 
 app.listen(port, () => {
-  console.log("listening on ",port);
+  console.log("listening on ", port);
 });
 
 async function search(query: string) {
-  const youtube = await new Innertube();
-  const result = await youtube.search(query);
+  const result = await youtube.search(query, {
+    type: "video",
+  });
   //   const resultArr: object[] = [];
   //   for (let i = 0; i < 10; i++) {
   //     const video = result.videos[i];

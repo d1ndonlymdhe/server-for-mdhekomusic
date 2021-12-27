@@ -4,13 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-//@ts-ignore
-const youtubei_js_1 = __importDefault(require("youtubei.js"));
 const youtubei_1 = require("youtubei");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 // import { Stream } from "stream";
 // import fs from "fs";
-const youtube = new youtubei_1.Client;
+const youtube = new youtubei_1.Client();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 app.use(function (req, res, next) {
@@ -32,33 +30,33 @@ app.get("/", (req, res) => {
 });
 app.get("/search", (req, res) => {
     const searchTerm = req.query.searchTerm;
-    if (typeof searchTerm == "string") {
-        const result = search(searchTerm);
-        result.then((data) => {
-            console.log(data);
-            const resultArr = [];
-            for (let i = 0; i < 10; i++) {
-                const video = data.videos[i];
-                const title = video.title;
-                const videoUrl = video.url;
-                const channel = video.author;
-                const thumbnail = video.metadata.thumbnails[0];
-                resultArr.push({ title, videoUrl, channel, thumbnail });
-            }
-            res.send(resultArr);
-        }).catch((err) => {
-            if (err) {
-                console.log(err);
-            }
-        });
-    }
+    const resArr = [];
+    search(searchTerm)
+        .then((results) => {
+        const length = results.length < 10 ? results.length : 10;
+        for (let i = 0; i < length; i++) {
+            const title = results[i].title;
+            const thumbnail = results[i].thumbnails;
+            const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
+            //@ts-ignore
+            const channel = results[i].channel;
+            resArr.push({ title, thumbnail, videoUrl, channel });
+        }
+        res.send(resArr);
+    })
+        .catch((err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
 });
 app.listen(port, () => {
     console.log("listening on ", port);
 });
 async function search(query) {
-    const youtube = await new youtubei_js_1.default();
-    const result = await youtube.search(query);
+    const result = await youtube.search(query, {
+        type: "video",
+    });
     //   const resultArr: object[] = [];
     //   for (let i = 0; i < 10; i++) {
     //     const video = result.videos[i];
