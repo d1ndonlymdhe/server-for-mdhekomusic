@@ -6,9 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 //@ts-ignore
 const youtubei_js_1 = __importDefault(require("youtubei.js"));
+const youtubei_1 = require("youtubei");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 // import { Stream } from "stream";
 // import fs from "fs";
+const youtube = new youtubei_1.Client;
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 app.use(function (req, res, next) {
