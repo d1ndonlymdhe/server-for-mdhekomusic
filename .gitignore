@@ -1,3 +1,4 @@
 /node_modules/
 *.mp3
 nodemon.json
+package-lock.json
