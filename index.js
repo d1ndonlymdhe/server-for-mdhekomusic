@@ -19,6 +19,12 @@ app.get("/song.mp3", (req, res) => {
   stream.pipe(res);
 });
 
+
+// async function func()
+// {
+//   const youtube = await new Innertube();
+//   details = 
+// }
 app.get("/search", (req, res) => {
   search(req.query.searchTerm);
   res.send;
@@ -42,16 +48,16 @@ app.get("/search", (req, res) => {
 // search()
 
 
-search2().then(data=>{
-  console.log(data[0].title)
-})
-
+// search2().then(data=>{
+//   console.log(data[0].title)
+// })
+search(" ")
 async function search(searchTerm) {
-  const youtube = await new Innertube();
-  const details = youtube.getDetails("yo4pmauhugo")
-  const eventEmmitter = new emmitter();
-  console.log(searchTerm);
-  const result = await youtube.search("Hello");
+  // const youtube = await new Innertube();
+  const details = await youtube.getVideo("yo4pmauhugo")
+  // const eventEmmitter = new emmitter();
+  // console.log(searchTerm);
+  // const result = await youtube.search("Hello");
   console.log(details);
   fs.writeFile("data.json", JSON.stringify(details), (err) => {
     if (err) {
@@ -59,7 +65,7 @@ async function search(searchTerm) {
     }
   });
 
-  return result;
+  // return result;
 }
 // getDetails("yP6JMJje1ak")
 async function getDetails(id){
