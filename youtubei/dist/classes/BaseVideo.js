@@ -156,6 +156,7 @@ class BaseVideo extends _1.Base {
         .contents;
     let primaryInfo;
     do {
+      console.log("loading primary info");
       primaryInfo = contents.find((c) => {
         // if (("videoPrimaryInfoRenderer" in c )!== undefined) {
         return "videoPrimaryInfoRenderer" in c;

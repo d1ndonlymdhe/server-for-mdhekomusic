@@ -12,7 +12,7 @@ import {
 import ytdl from "ytdl-core";
 // import { Stream } from "stream";
 import fs from "fs";
-import { nextTick } from "process";
+// import { nextTick } from "process";
 const youtube = new Client();
 const app = express();
 const port = process.env.PORT || 4000;
@@ -63,6 +63,7 @@ app.get("/getNext", (req, res) => {
   let queue: queueEl[] = [];
   getNext(url, length, oldQueueIds).then((data) => {
     queue = data;
+    // res.setHeader({ type: "cors" });
     res.send(queue);
   });
 });
@@ -255,12 +256,12 @@ async function getNext(
 
 function getRelated(video: Video, a: number) {
   let next: VideoCompact;
-  try {
-    next = <VideoCompact>video?.related[a];
-  } catch (err) {
-    console.log("error");
-    next = getRelated(video, a);
-  }
+  // try {
+  next = <VideoCompact>video?.related[a];
+  // } catch (err) {
+  //   console.log("error");
+  //   next = getRelated(video, a);
+  // }
   return next;
 }
 

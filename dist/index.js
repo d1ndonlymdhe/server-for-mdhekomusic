@@ -10,6 +10,7 @@ const index_1 = require("../youtubei/dist/index");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 // import { Stream } from "stream";
 const fs_1 = __importDefault(require("fs"));
+// import { nextTick } from "process";
 const youtube = new index_1.Client();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
@@ -40,6 +41,7 @@ app.get("/getNext", (req, res) => {
     let queue = [];
     getNext(url, length, oldQueueIds).then((data) => {
         queue = data;
+        // res.setHeader({ type: "cors" });
         res.send(queue);
     });
 });
@@ -169,7 +171,7 @@ async function getNext(id, length, oldQueueIds) {
         const video = await youtube.getVideo(id);
         let next;
         do {
-            next = video?.related[a];
+            next = getRelated(video, a);
             // console.log(video.related[a]);
             // console.log(next.id);
             a++;
@@ -192,6 +194,16 @@ async function getNext(id, length, oldQueueIds) {
         });
     }
     return q;
+}
+function getRelated(video, a) {
+    let next;
+    // try {
+    next = video?.related[a];
+    // } catch (err) {
+    //   console.log("error");
+    //   next = getRelated(video, a);
+    // }
+    return next;
 }
 function youtube_parser(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
