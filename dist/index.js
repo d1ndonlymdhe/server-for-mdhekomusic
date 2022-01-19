@@ -139,6 +139,7 @@ app.get("/search", (req, res) => {
     const searchTerm = req.query.searchTerm;
     const resArr = [];
     const runThis = `${py} ${pyFile} "${searchTerm}" search`;
+    console.log(runThis);
     const results = JSON.parse(cmd.runSync(runThis).data).data;
     // console.log(results);
     const length = results.length < 10 ? results.length : 10;
