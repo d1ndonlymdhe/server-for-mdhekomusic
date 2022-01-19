@@ -1,6 +1,9 @@
 import express from "express";
 //@ts-ignore
 // import Innertube from "youtubei.js";
+import commandline from "node-cmd";
+const cmd = commandline;
+
 import {
   ChannelCompact,
   Client,
@@ -162,6 +165,12 @@ type forResArr = {
   videoUrl: string;
   channel: ChannelCompact;
 };
+type result = {
+  id: string;
+  thumbnail: Thumbnail;
+  title: string;
+  channel: ChannelCompact;
+};
 type Thumbnail = {
   url: string;
   width: number;
@@ -170,31 +179,46 @@ type Thumbnail = {
 app.get("/search", (req, res) => {
   const searchTerm = <string>req.query.searchTerm;
   const resArr: forResArr[] = [];
-
-  search(searchTerm)
-    .then((results) => {
-      const length: number = results.length < 10 ? results.length : 10;
-      for (let i = 0; i < length; i++) {
-        //@ts-ignore
-        const title = <string>results[i].title;
-        const thumbnails = <Thumbnails>results[i].thumbnails;
-        const thumbnail = {
-          url: thumbnails[0].url,
-          height: thumbnails[0].height,
-          width: thumbnails[0].width,
-        };
-        const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
-        //@ts-ignore
-        const channel: ChannelCompact = results[i].channel;
-        resArr.push({ title, thumbnail, videoUrl, channel });
-      }
-      res.send(resArr);
-    })
-    .catch((err) => {
-      if (err) {
-        console.log(err);
-      }
-    });
+  const results: result[] = JSON.parse(
+    cmd.runSync(`py index.py "${searchTerm}" search`).data
+  );
+  const length: number = results.length < 10 ? results.length : 10;
+  for (let i = 0; i < length; i++) {
+    const title = results[i].title;
+    const thumbnail = {
+      url: results[i].thumbnail.url,
+      height: results[i].thumbnail.height,
+      width: results[i].thumbnail.width,
+    };
+    const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
+    const channel = results[i].channel;
+    resArr.push({ title, thumbnail, videoUrl, channel });
+  }
+  res.send(resArr);
+  // search(searchTerm)
+  //   .then((results) => {
+  //     const length: number = results.length < 10 ? results.length : 10;
+  //     for (let i = 0; i < length; i++) {
+  //       //@ts-ignore
+  //       const title = <string>results[i].title;
+  //       const thumbnails = <Thumbnails>results[i].thumbnails;
+  //       const thumbnail = {
+  //         url: thumbnails[0].url,
+  //         height: thumbnails[0].height,
+  //         width: thumbnails[0].width,
+  //       };
+  //       const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
+  //       //@ts-ignore
+  //       const channel: ChannelCompact = results[i].channel;
+  //       resArr.push({ title, thumbnail, videoUrl, channel });
+  //     }
+  //     res.send(resArr);
+  //   })
+  //   .catch((err) => {
+  //     if (err) {
+  //       console.log(err);
+  //     }
+  //   });
 });
 
 app.listen(port, () => {
