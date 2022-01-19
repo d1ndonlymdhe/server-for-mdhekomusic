@@ -17,8 +17,10 @@ const youtube = new index_1.Client();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 let py = "python3";
+let pyFile = "index.py";
 if (port == 4000) {
     py = "py";
+    pyFile = "app/index.py";
 }
 let cacheInfo = JSON.parse(fs_1.default.readFileSync("./recentCache/cacheInfo.json", {
     encoding: "utf-8",
@@ -136,7 +138,7 @@ app.get("/", (req, res) => {
 app.get("/search", (req, res) => {
     const searchTerm = req.query.searchTerm;
     const resArr = [];
-    const runThis = `${py} index.py "${searchTerm}" search`;
+    const runThis = `${py} ${pyFile} "${searchTerm}" search`;
     const results = JSON.parse(cmd.runSync(runThis).data).data;
     // console.log(results);
     const length = results.length < 10 ? results.length : 10;
