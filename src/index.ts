@@ -18,7 +18,10 @@ import fs from "fs";
 const youtube = new Client();
 const app = express();
 const port = process.env.PORT || 4000;
-
+let py = "python3";
+if (port == 4000) {
+  py = "py";
+}
 type cacheStateType = {
   position: number;
   name: string;
@@ -181,7 +184,7 @@ app.get("/search", (req, res) => {
   const searchTerm = <string>req.query.searchTerm;
   const resArr: forResArr[] = [];
   const results: result[] = JSON.parse(
-    cmd.runSync(`py index.py "${searchTerm}" search`).data
+    cmd.runSync(`${py} index.py "${searchTerm}" search`).data
   ).data;
   // console.log(results);
   const length: number = results.length < 10 ? results.length : 10;
