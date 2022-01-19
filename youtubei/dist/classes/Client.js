@@ -123,12 +123,12 @@ class Client {
     return __awaiter(this, void 0, void 0, function* () {
       const videoId = (0, common_1.getQueryParameter)(videoIdOrUrl, "v");
       let response;
-      do {
-        console.log("loading data");
-        response = yield this.http.get(`${constants_1.WATCH_END_POINT}`, {
-          params: { v: videoId, pbj: "1" },
-        });
-      } while (response.data[3].response.contents == undefined);
+
+      // console.log("loading data");
+      response = yield this.http.get(`${constants_1.WATCH_END_POINT}`, {
+        params: { v: videoId, pbj: "1" },
+      });
+      // } while (response.data[3].response.contents == undefined);
       // if (!response.data[3].response.contents) return undefined as T;
       return !response.data[2].playerResponse.playabilityStatus
         .liveStreamability

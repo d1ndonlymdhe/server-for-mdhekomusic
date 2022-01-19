@@ -42,7 +42,7 @@ app.get("/getQueue", (req, res) => {
     queue = data;
     res.send(queue);
   });
-  // const queueData
+  const queueData = cmd.runSync(`py `);
 });
 app.get("/getNext", (req, res) => {
   const url = req.query.url;
@@ -150,7 +150,7 @@ app.get("/search", (req, res) => {
   const results = JSON.parse(
     cmd.runSync(`py index.py "${searchTerm}" search`).data
   ).data;
-  console.log(results);
+  // console.log(results);
   const length = results.length < 10 ? results.length : 10;
   console.log(length, results.length);
   for (let i = 0; i < length; i++) {

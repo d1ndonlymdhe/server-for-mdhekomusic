@@ -183,7 +183,7 @@ app.get("/search", (req, res) => {
   const results: result[] = JSON.parse(
     cmd.runSync(`py index.py "${searchTerm}" search`).data
   ).data;
-  console.log(results);
+  // console.log(results);
   const length: number = results.length < 10 ? results.length : 10;
   console.log(length, results.length);
   for (let i = 0; i < length; i++) {

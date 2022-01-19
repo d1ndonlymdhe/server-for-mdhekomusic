@@ -155,15 +155,15 @@ class BaseVideo extends _1.Base {
       data[3].response.contents.twoColumnWatchNextResults.results.results
         .contents;
     let primaryInfo;
-    do {
-      console.log("loading primary info");
-      primaryInfo = contents.find((c) => {
-        // if (("videoPrimaryInfoRenderer" in c )!== undefined) {
-        return "videoPrimaryInfoRenderer" in c;
-        // }
-      });
-    } while (primaryInfo == undefined);
-    primaryInfo = primaryInfo.videoPrimaryInfoRenderer;
+
+    // console.log("loading primary info");
+    primaryInfo = contents.find((c) => {
+      // if (("videoPrimaryInfoRenderer" in c )!== undefined) {
+      return "videoPrimaryInfoRenderer" in c;
+      // }
+    }).videoPrimaryInfoRenderer;
+
+    // primaryInfo = primaryInfo.videoPrimaryInfoRenderer;
     const secondaryInfo = contents.find((c) => {
       // if (("videoSecondaryInfoRenderer" in c )!== undefined) {
       return "videoSecondaryInfoRenderer" in c;
