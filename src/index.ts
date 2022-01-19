@@ -183,9 +183,8 @@ type Thumbnail = {
 app.get("/search", (req, res) => {
   const searchTerm = <string>req.query.searchTerm;
   const resArr: forResArr[] = [];
-  const results: result[] = JSON.parse(
-    cmd.runSync(`${py} index.py "${searchTerm}" search`).data
-  ).data;
+  const runThis = `${py} index.py "${searchTerm}" search`;
+  const results: result[] = JSON.parse(cmd.runSync(runThis).data).data;
   // console.log(results);
   const length: number = results.length < 10 ? results.length : 10;
   console.log(length, results.length);
