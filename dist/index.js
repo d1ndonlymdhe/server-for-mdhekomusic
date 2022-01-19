@@ -6,8 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 //@ts-ignore
 // import Innertube from "youtubei.js";
-const node_cmd_1 = __importDefault(require("node-cmd"));
-const cmd = node_cmd_1.default;
 const index_1 = require("../youtubei/dist/index");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
 // import { Stream } from "stream";
@@ -131,31 +129,30 @@ app.get("/", (req, res) => {
 app.get("/search", (req, res) => {
     const searchTerm = req.query.searchTerm;
     const resArr = [];
-    const searchResults = JSON.parse(cmd.runSync(`py index.py "${searchTerm}" search`).data);
-    // search(searchTerm)
-    //   .then((results) => {
-    //     const length: number = results.length < 10 ? results.length : 10;
-    //     for (let i = 0; i < length; i++) {
-    //       //@ts-ignore
-    //       const title = <string>results[i].title;
-    //       const thumbnails = <Thumbnails>results[i].thumbnails;
-    //       const thumbnail = {
-    //         url: thumbnails[0].url,
-    //         height: thumbnails[0].height,
-    //         width: thumbnails[0].width,
-    //       };
-    //       const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
-    //       //@ts-ignore
-    //       const channel: ChannelCompact = results[i].channel;
-    //       resArr.push({ title, thumbnail, videoUrl, channel });
-    //     }
-    //     res.send(resArr);
-    //   })
-    //   .catch((err) => {
-    //     if (err) {
-    //       console.log(err);
-    //     }
-    //   });
+    search(searchTerm)
+        .then((results) => {
+        const length = results.length < 10 ? results.length : 10;
+        for (let i = 0; i < length; i++) {
+            //@ts-ignore
+            const title = results[i].title;
+            const thumbnails = results[i].thumbnails;
+            const thumbnail = {
+                url: thumbnails[0].url,
+                height: thumbnails[0].height,
+                width: thumbnails[0].width,
+            };
+            const videoUrl = `https://www.youtube.com/watch?v=${results[i].id}`;
+            //@ts-ignore
+            const channel = results[i].channel;
+            resArr.push({ title, thumbnail, videoUrl, channel });
+        }
+        res.send(resArr);
+    })
+        .catch((err) => {
+        if (err) {
+            console.log(err);
+        }
+    });
 });
 app.listen(port, () => {
     console.log("listening on ", port);
