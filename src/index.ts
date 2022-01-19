@@ -22,7 +22,7 @@ let py = "python3";
 let pyFile = "index.py";
 if (port == 4000) {
   py = "py";
-  pyFile = "app/index.py";
+  // pyFile = "app/index.py";
 }
 
 type cacheStateType = {

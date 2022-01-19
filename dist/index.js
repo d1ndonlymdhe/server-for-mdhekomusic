@@ -20,7 +20,7 @@ let py = "python3";
 let pyFile = "index.py";
 if (port == 4000) {
     py = "py";
-    pyFile = "app/index.py";
+    // pyFile = "app/index.py";
 }
 let cacheInfo = JSON.parse(fs_1.default.readFileSync("./recentCache/cacheInfo.json", {
     encoding: "utf-8",
