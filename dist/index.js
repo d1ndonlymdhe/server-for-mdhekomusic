@@ -17,10 +17,10 @@ const youtube = new index_1.Client();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 let py = "python3";
-let pyFile = "index.py";
+let pyFile = "dist/index.py";
 if (port == 4000) {
     py = "py";
-    // pyFile = "app/index.py";
+    pyFile = "index.py";
 }
 let cacheInfo = JSON.parse(fs_1.default.readFileSync("./recentCache/cacheInfo.json", {
     encoding: "utf-8",

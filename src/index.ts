@@ -19,10 +19,10 @@ const youtube = new Client();
 const app = express();
 const port = process.env.PORT || 4000;
 let py = "python3";
-let pyFile = "index.py";
+let pyFile = "dist/index.py";
 if (port == 4000) {
   py = "py";
-  // pyFile = "app/index.py";
+  pyFile = "index.py";
 }
 
 type cacheStateType = {
