@@ -46,14 +46,7 @@ let cacheInfo: cacheInfo = JSON.parse(
 const cacheState: cacheStateType[] = [];
 const maxCacheItems = 10;
 const queueLength = 10;
-// app.use(function (req, res, next) {
-//   res.header("Access-Control-Allow-Origin", "*");
-//   res.header(
-//     "Access-Control-Allow-Headers",
-//     "Origin, X-Requested-With, Content-Type, Accept , *"
-//   );
-//   next();
-// });
+
 app.use(cors());
 
 app.get("/getQueue", (req, res) => {
@@ -70,7 +63,6 @@ app.get("/getQueue", (req, res) => {
     let next: result;
     do {
       next = getNext2(id, a);
-      // if (!oldQueueIds.includes(next.id)) {
       a++;
     } while (oldQueueIds.includes(next.id));
     a = 0;
@@ -78,7 +70,6 @@ app.get("/getQueue", (req, res) => {
     retArr.push(resultToForResArr(next));
   }
   res.send(retArr);
-  // res.send(queue);
 });
 function resultToForResArr(res: result): forResArr {
   return {
@@ -95,17 +86,6 @@ function getNext2(id: string, index: number) {
   return next;
 }
 
-app.get("/getNext", (req, res) => {
-  const url = <string>req.query.url;
-  const oldQueueIds = <string[]>JSON.parse(<string>req.query.data).oldQueueIds;
-  const length = parseInt(<string>req.query.length);
-  let queue: queueEl[] = [];
-  getNext(url, length, oldQueueIds).then((data) => {
-    queue = data;
-    // res.setHeader({ type: "cors" });
-    res.send(queue);
-  });
-});
 app.get("/song", (req, res) => {
   try {
     const url = <string>req.query.url;
@@ -253,55 +233,6 @@ type queueEl = {
   title: string;
   channel: string;
 };
-async function getNext(
-  id: string,
-  length: number,
-  oldQueueIds: string[]
-): Promise<queueEl[]> {
-  console.log(oldQueueIds);
-  const q: queueEl[] = [];
-  let a = 0;
-  for (let i = 0; i < length; i++) {
-    const video = await (<Promise<Video | LiveVideo>>youtube.getVideo(id));
-    let next;
-    do {
-      next = getRelated(<Video>video, a);
-      // console.log(video.related[a]);
-      // console.log(next.id);
-      a++;
-    } while (
-      q.map((el) => el.id).includes(next.id) ||
-      oldQueueIds.includes(next.id)
-    );
-    a = 0;
-    const nextID = next.id;
-    const nextUrl = `https://www.youtube.com/watch?v=${nextID}`;
-    // console.log(video);
-    id = nextID;
-    const nextTitle = next.title;
-    const nextThumbnail = next.thumbnails[0];
-    const nextChannel = <string>next.channel?.name;
-    q.push({
-      id: nextID,
-      videoUrl: nextUrl,
-      title: nextTitle,
-      thumbnail: nextThumbnail,
-      channel: nextChannel,
-    });
-  }
-  return q;
-}
-
-function getRelated(video: Video, a: number) {
-  let next: VideoCompact;
-  // try {
-  next = <VideoCompact>video?.related[a];
-  // } catch (err) {
-  //   console.log("error");
-  //   next = getRelated(video, a);
-  // }
-  return next;
-}
 
 function youtube_parser(url: string) {
   var regExp =
@@ -309,7 +240,6 @@ function youtube_parser(url: string) {
   var match = url.match(regExp);
   return match && match[7].length == 11 ? match[7] : false;
 }
-// console.log(runPy("getNext", ["zU1Vab870GU", "3"]));
 function runPy(func: string, arrOfArgs: string[]) {
   let runThis = `${py} ${pyFile} ${func}`;
   arrOfArgs.forEach((arg) => {
