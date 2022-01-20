@@ -8,6 +8,52 @@ arg1 = sys.argv[2]
 function = sys.argv[1]
 
 
+# def removeItemFromList(list: list, index: int):
+#     retList = []
+#     for i in range(0, len(list)-1):
+#         if(i != index):
+#             retList.push(list[i])
+#     return retList
+
+
+# def purgeEmpty(listOfDict: list):
+#     retDict = {}
+#     for i in range(0, len(listOfDict)-1):
+#         dict = listOfDict[i]
+#         for el in dict:
+#             if el == {}:
+#                 listofDict = removeItemFromList(listOfDict, i)
+#             else:
+#                 listOfDict = purgeEmpty(listOfDict)
+#     return listOfDict
+# # def purgeEmpty(listOFDict):
+# #     for
+
+
+# def getRelated(id):
+# if(id == id):
+#     print(id)
+# data = client.next(id)
+
+# related = data.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results
+# newList = []
+
+# for i in range(0, len(related)-1):
+#     compactVideoRenderer = related[i].compactVideoRenderer
+#     if compactVideoRenderer.videoId != {}:
+#         newList.append({"id": compactVideoRenderer.videoId,
+#                         "thumbnail": {"url": compactVideoRenderer.thumbnail.thumbnails[0].url,
+#                                       "width": compactVideoRenderer.thumbnail.thumbnails[0].width,
+#                                       "height": compactVideoRenderer.thumbnail.thumbnails[0].height
+#                                       },
+#                         "title": compactVideoRenderer.title.simpleText,
+#                         "channel": compactVideoRenderer.longBylineText.runs[0].text
+#                         })
+
+# jsonData = json.dumps({"data": newList}, indent=4)
+# print(jsonData)
+
+
 def getNext(id, index):
     data = client.next(id)
     related = data.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results
