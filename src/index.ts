@@ -1,23 +1,11 @@
 import express from "express";
 //@ts-ignore
-// import Innertube from "youtubei.js";
 import commandline from "node-cmd";
-// import cors from "cors";
 import cors from "cors";
 const cmd = commandline;
-import {
-  ChannelCompact,
-  Client,
-  LiveVideo,
-  Thumbnails,
-  Video,
-  VideoCompact,
-} from "../youtubei/dist/index";
+
 import ytdl from "ytdl-core";
-// import { Stream } from "stream";
 import fs from "fs";
-// import { nextTick } from "process";
-const youtube = new Client();
 const app = express();
 const port = process.env.PORT || 4000;
 let py = "python3";
@@ -218,13 +206,6 @@ app.get("/search", (req, res) => {
 app.listen(port, () => {
   console.log("listening on ", port);
 });
-
-async function search(query: string) {
-  const result = await youtube.search(query, {
-    type: "video",
-  });
-  return result;
-}
 
 type queueEl = {
   id: string;
