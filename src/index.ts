@@ -2,6 +2,8 @@ import express from "express";
 //@ts-ignore
 // import Innertube from "youtubei.js";
 import commandline from "node-cmd";
+// import cors from "cors";
+import cors from "cors";
 const cmd = commandline;
 import {
   ChannelCompact,
@@ -44,14 +46,15 @@ let cacheInfo: cacheInfo = JSON.parse(
 const cacheState: cacheStateType[] = [];
 const maxCacheItems = 10;
 const queueLength = 10;
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header(
+//     "Access-Control-Allow-Headers",
+//     "Origin, X-Requested-With, Content-Type, Accept , *"
+//   );
+//   next();
+// });
+app.use(cors());
 
 app.get("/getQueue", (req, res) => {
   console.log("getting Queue");
