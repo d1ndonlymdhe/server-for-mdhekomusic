@@ -54,18 +54,44 @@ app.use(function (req, res, next) {
 });
 
 app.get("/getQueue", (req, res) => {
-  const url = <string>req.query.url;
-  // const oldQueue = <queueEl>JSON.parse(<string>req.query.data).oldQueue;
-
-  let queue: queueEl[] = [];
-
-  getNext(url, queueLength, []).then((data) => {
-    queue = data;
-    res.send(queue);
-  });
-
-  const queueData = cmd.runSync(`py `);
+  console.log("getting Queue");
+  const videoUrl = <string>req.query.url;
+  const id = <string>youtube_parser(videoUrl);
+  const length = parseInt(<string>req.query.length, 10);
+  const retArr: forResArr[] = [];
+  const oldQueueIds: string[] = <string[]>(
+    JSON.parse(<string>req.query.data).oldQueueIds
+  );
+  for (let i = 0; i < length; i++) {
+    let a = 0;
+    let next: result;
+    do {
+      next = getNext2(id, a);
+      // if (!oldQueueIds.includes(next.id)) {
+      a++;
+    } while (oldQueueIds.includes(next.id));
+    a = 0;
+    oldQueueIds.push(next.id);
+    retArr.push(resultToForResArr(next));
+  }
+  res.send(retArr);
+  // res.send(queue);
 });
+function resultToForResArr(res: result): forResArr {
+  return {
+    title: res.title,
+    thumbnail: res.thumbnail,
+    videoUrl: `https://www.youtube.com/watch?v=${res.id}`,
+    channel: res.channel,
+  };
+}
+function getNext2(id: string, index: number) {
+  // const runThis = `${py} ${pyFile} "${id}" getNext`;
+  const next: result = runPy("getNext", [id, `${index}`]);
+  console.log(next);
+  return next;
+}
+
 app.get("/getNext", (req, res) => {
   const url = <string>req.query.url;
   const oldQueueIds = <string[]>JSON.parse(<string>req.query.data).oldQueueIds;
@@ -186,9 +212,9 @@ type Thumbnail = {
 app.get("/search", (req, res) => {
   const searchTerm = <string>req.query.searchTerm;
   const resArr: forResArr[] = [];
-  const runThis = `${py} ${pyFile} "${searchTerm}" search`;
-  console.log(runThis);
-  const results: result[] = JSON.parse(cmd.runSync(runThis).data).data;
+  // const runThis = `${py} ${pyFile} "${searchTerm}" search`;
+  // console.log(runThis);
+  const results: result[] = runPy("search", [searchTerm]);
   // console.log(results);
   const length: number = results.length < 10 ? results.length : 10;
   console.log(length, results.length);
@@ -279,4 +305,13 @@ function youtube_parser(url: string) {
     /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
   var match = url.match(regExp);
   return match && match[7].length == 11 ? match[7] : false;
+}
+// console.log(runPy("getNext", ["zU1Vab870GU", "3"]));
+function runPy(func: string, arrOfArgs: string[]) {
+  let runThis = `${py} ${pyFile} ${func}`;
+  arrOfArgs.forEach((arg) => {
+    runThis = runThis.concat(` ${arg}`);
+  });
+  console.log(runThis);
+  return JSON.parse(cmd.runSync(runThis).data).data;
 }

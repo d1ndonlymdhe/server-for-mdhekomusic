@@ -34,15 +34,41 @@ app.use(function (req, res, next) {
     next();
 });
 app.get("/getQueue", (req, res) => {
-    const url = req.query.url;
-    // const oldQueue = <queueEl>JSON.parse(<string>req.query.data).oldQueue;
-    let queue = [];
-    getNext(url, queueLength, []).then((data) => {
-        queue = data;
-        res.send(queue);
-    });
-    const queueData = cmd.runSync(`py `);
+    console.log("getting Queue");
+    const videoUrl = req.query.url;
+    const id = youtube_parser(videoUrl);
+    const length = parseInt(req.query.length, 10);
+    const retArr = [];
+    const oldQueueIds = (JSON.parse(req.query.data).oldQueueIds);
+    for (let i = 0; i < length; i++) {
+        let a = 0;
+        let next;
+        do {
+            next = getNext2(id, a);
+            // if (!oldQueueIds.includes(next.id)) {
+            a++;
+        } while (oldQueueIds.includes(next.id));
+        a = 0;
+        oldQueueIds.push(next.id);
+        retArr.push(resultToForResArr(next));
+    }
+    res.send(retArr);
+    // res.send(queue);
 });
+function resultToForResArr(res) {
+    return {
+        title: res.title,
+        thumbnail: res.thumbnail,
+        videoUrl: `https://www.youtube.com/watch?v=${res.id}`,
+        channel: res.channel,
+    };
+}
+function getNext2(id, index) {
+    // const runThis = `${py} ${pyFile} "${id}" getNext`;
+    const next = runPy("getNext", [id, `${index}`]);
+    console.log(next);
+    return next;
+}
 app.get("/getNext", (req, res) => {
     const url = req.query.url;
     const oldQueueIds = JSON.parse(req.query.data).oldQueueIds;
@@ -138,9 +164,9 @@ app.get("/", (req, res) => {
 app.get("/search", (req, res) => {
     const searchTerm = req.query.searchTerm;
     const resArr = [];
-    const runThis = `${py} ${pyFile} "${searchTerm}" search`;
-    console.log(runThis);
-    const results = JSON.parse(cmd.runSync(runThis).data).data;
+    // const runThis = `${py} ${pyFile} "${searchTerm}" search`;
+    // console.log(runThis);
+    const results = runPy("search", [searchTerm]);
     // console.log(results);
     const length = results.length < 10 ? results.length : 10;
     console.log(length, results.length);
@@ -212,4 +238,13 @@ function youtube_parser(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     var match = url.match(regExp);
     return match && match[7].length == 11 ? match[7] : false;
+}
+// console.log(runPy("getNext", ["zU1Vab870GU", "3"]));
+function runPy(func, arrOfArgs) {
+    let runThis = `${py} ${pyFile} ${func}`;
+    arrOfArgs.forEach((arg) => {
+        runThis = runThis.concat(` ${arg}`);
+    });
+    console.log(runThis);
+    return JSON.parse(cmd.runSync(runThis).data).data;
 }
