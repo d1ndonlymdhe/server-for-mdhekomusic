@@ -5,7 +5,11 @@
 
 # Packages Used:
 
-- Node - Express JS - Typescript - Cors - Node-cmd
+- Node 
+-   - Express JS 
+-   - Typescript 
+-   - Cors 
+-   - Node-cmd
 - Python
   - Innertube
 
