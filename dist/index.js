@@ -5,15 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 //@ts-ignore
-// import Innertube from "youtubei.js";
 const node_cmd_1 = __importDefault(require("node-cmd"));
+const cors_1 = __importDefault(require("cors"));
 const cmd = node_cmd_1.default;
-const index_1 = require("../youtubei/dist/index");
 const ytdl_core_1 = __importDefault(require("ytdl-core"));
-// import { Stream } from "stream";
 const fs_1 = __importDefault(require("fs"));
-// import { nextTick } from "process";
-const youtube = new index_1.Client();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 4000;
 let py = "python3";
@@ -27,12 +23,7 @@ let cacheInfo = JSON.parse(fs_1.default.readFileSync("./recentCache/cacheInfo.js
 }));
 const cacheState = [];
 const maxCacheItems = 10;
-const queueLength = 10;
-app.use(function (req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    next();
-});
+app.use((0, cors_1.default)());
 app.get("/getQueue", (req, res) => {
     console.log("getting Queue");
     const videoUrl = req.query.url;
@@ -45,7 +36,6 @@ app.get("/getQueue", (req, res) => {
         let next;
         do {
             next = getNext2(id, a);
-            // if (!oldQueueIds.includes(next.id)) {
             a++;
         } while (oldQueueIds.includes(next.id));
         a = 0;
@@ -53,7 +43,6 @@ app.get("/getQueue", (req, res) => {
         retArr.push(resultToForResArr(next));
     }
     res.send(retArr);
-    // res.send(queue);
 });
 function resultToForResArr(res) {
     return {
@@ -64,22 +53,10 @@ function resultToForResArr(res) {
     };
 }
 function getNext2(id, index) {
-    // const runThis = `${py} ${pyFile} "${id}" getNext`;
     const next = runPy("getNext", [id, `${index}`]);
     console.log(next);
     return next;
 }
-app.get("/getNext", (req, res) => {
-    const url = req.query.url;
-    const oldQueueIds = JSON.parse(req.query.data).oldQueueIds;
-    const length = parseInt(req.query.length);
-    let queue = [];
-    getNext(url, length, oldQueueIds).then((data) => {
-        queue = data;
-        // res.setHeader({ type: "cors" });
-        res.send(queue);
-    });
-});
 app.get("/song", (req, res) => {
     try {
         const url = req.query.url;
@@ -164,10 +141,7 @@ app.get("/", (req, res) => {
 app.get("/search", (req, res) => {
     const searchTerm = req.query.searchTerm;
     const resArr = [];
-    // const runThis = `${py} ${pyFile} "${searchTerm}" search`;
-    // console.log(runThis);
     const results = runPy("search", [searchTerm]);
-    // console.log(results);
     const length = results.length < 10 ? results.length : 10;
     console.log(length, results.length);
     for (let i = 0; i < length; i++) {
@@ -186,60 +160,11 @@ app.get("/search", (req, res) => {
 app.listen(port, () => {
     console.log("listening on ", port);
 });
-async function search(query) {
-    const result = await youtube.search(query, {
-        type: "video",
-    });
-    return result;
-}
-async function getNext(id, length, oldQueueIds) {
-    console.log(oldQueueIds);
-    const q = [];
-    let a = 0;
-    for (let i = 0; i < length; i++) {
-        const video = await youtube.getVideo(id);
-        let next;
-        do {
-            next = getRelated(video, a);
-            // console.log(video.related[a]);
-            // console.log(next.id);
-            a++;
-        } while (q.map((el) => el.id).includes(next.id) ||
-            oldQueueIds.includes(next.id));
-        a = 0;
-        const nextID = next.id;
-        const nextUrl = `https://www.youtube.com/watch?v=${nextID}`;
-        // console.log(video);
-        id = nextID;
-        const nextTitle = next.title;
-        const nextThumbnail = next.thumbnails[0];
-        const nextChannel = next.channel?.name;
-        q.push({
-            id: nextID,
-            videoUrl: nextUrl,
-            title: nextTitle,
-            thumbnail: nextThumbnail,
-            channel: nextChannel,
-        });
-    }
-    return q;
-}
-function getRelated(video, a) {
-    let next;
-    // try {
-    next = video?.related[a];
-    // } catch (err) {
-    //   console.log("error");
-    //   next = getRelated(video, a);
-    // }
-    return next;
-}
 function youtube_parser(url) {
     var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     var match = url.match(regExp);
     return match && match[7].length == 11 ? match[7] : false;
 }
-// console.log(runPy("getNext", ["zU1Vab870GU", "3"]));
 function runPy(func, arrOfArgs) {
     let runThis = `${py} ${pyFile} ${func}`;
     arrOfArgs.forEach((arg) => {
